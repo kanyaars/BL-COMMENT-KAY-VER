@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+from utils import green_text, red_texts, info_text, banner
+from colors import red, green, white, reset
 import time
 import random
 import json
@@ -73,17 +75,17 @@ def dofollow(urls, Koleksi_Bacotan):
                 )
                 random_delay()
                 submit_button.click()
-                print(f"Bacotan lo sukses > {url}")
+                print(green_text.format (urls=url))
 
             except TimeoutException:
-                print(f"Bacotan lo gagal > {url}")
+                print(red_texts[0].format (urls=url))
             time.sleep(3)
         except WebDriverException:
-            print(f"Yah apanya yang salah ya, coba lo check > {url}")
+            print(red_texts[1].format (urls=url))
             continue
 
     driver.quit()
-    print("Semua Bacotan lo di Backlink dofollow udah rapih nih")
+    print(red_texts[2])
 
 def nofollow(urls, Koleksi_Bacotan):
     driver = init_driver()
@@ -95,7 +97,7 @@ def nofollow(urls, Koleksi_Bacotan):
             Bacotan_Random = random.choice(Tumpukan_Bacotan)
             komentar_section = find_element_by_multiple_attributes(driver, 'form', ['id=comment', 'class=comment-form', 'name=comment'])
             if not komentar_section:
-                print(f"Kaga ada tempat buat ngebacot > {url}")
+                print(red_texts[3].format (urls=url))
                 continue
 
             nama_field = find_element_by_multiple_attributes(driver, 'input', ['id=author', 'name=author', 'class=name'])
@@ -128,24 +130,25 @@ def nofollow(urls, Koleksi_Bacotan):
 
             if submit_button:
                 submit_button.click()
-                print(f"Bacotan lo sukses > {url}")
+                print(green_text.format (urls=url))
             else:
-                print(f"Bacotan lo gagal > {url}")
+                print(red_texts[0].format (urls=url))
 
             time.sleep(3)
 
         except WebDriverException:
-            print(f"Yah apanya yang salah ya, coba lo check > {url}")
+            print(red_texts[1].format (urls=url))
             continue
 
     driver.quit()
-    print("Semua Bacotan lo di Backlink nofollow udah rapih nih.")
+    print(red_texts[4])
 
 def main():
-    print("Lo mau ngebacot di Backlink apaan:")
-    print("1. Dofollow")
-    print("2. Nofollow")
-    pilihan = input("Buruan lo pilih 1 atau 2, kaga ada angka 3: ").strip()
+    print(banner)
+    print(red_texts[5])
+    print(red_texts[6])
+    print(red_texts[7])
+    pilihan = input(red_texts[8] + " ").strip()
 
     if pilihan == "1":
         urls = [
@@ -336,16 +339,16 @@ def main():
         nofollow(urls, "nofollow.json")
 
     elif pilihan == "3":
-        print("LO BISA BACA KAGA SI?!! 🤬 UDAH GUA BILANG KAGA ADA PILIHAN NOMOR 3 😡")
+        print(red_texts[9])
 
     elif pilihan.isalpha():
-        print("INI PILIHANNYA CUMAN ANGKA DOANG JANGAN LO MASUKIN HURUF BUTA LO YA")
+        print(red_texts[10])
     
     elif not pilihan.isalnum():
-        print("LO MASUKIN APAAN ITU TOLOL???!!!!")
+        print(red_texts[11])
         
     else:
-        print("NOMOR 3 AJA KAGA ADA LO MILIH NOMOR YANG LAEN??!!!!")
+        print(red_texts[12])
 
 if __name__ == "__main__":
     main()
