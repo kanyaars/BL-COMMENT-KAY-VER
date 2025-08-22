@@ -39,6 +39,16 @@ red_texts = [
     f"{red}INI PILIHANNYA CUMAN ANGKA DOANG JANGAN LO MASUKIN HURUF BUTA LO YA{reset}",
     f"{red}LO MASUKIN APAAN ITU TOLOL???!!!!{reset}",
     f"{red}NOMOR 3 AJA KAGA ADA LO MILIH NOMOR YANG LAEN??!!!!{reset}"
+
 ]
 
 info_text = f"{white}Ini teks putih contoh doang{reset}"
+
+proxy_info_texts = {
+    "fetching": f"{red}[*] Fetching proxies...{reset}",
+    "total": f"{red}[*] Hasil panen yang gue dapet: {{total}}{reset}",
+    "checking": f"{red}[*] Gue check dulu bentaran ya...{reset}",
+    "alive": f"{red}[*] Yang bisa dipake cuman: {{alive}}{reset}",
+    "saving": f"{red}[*] Gue simpen {{alive}} proxy yang beneran hidup ke: {{path}}{reset}",
+    "done": f"{red}[*] Udah kelar, gausah rewel.{reset}"
+}

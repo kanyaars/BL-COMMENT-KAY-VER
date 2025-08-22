@@ -1,3 +1,5 @@
+from lib.tools.utils import proxy_info_texts
+from lib.tools.colors import red
 import requests
 import random
 import concurrent.futures
@@ -19,7 +21,7 @@ def fetch_proxyscrape_socks5():
         line = line.strip()
         if line and ":" in line:
             proxies.append(f"socks5://{line}")
-    print(f"Hasil panen yang gue dapet: {len(proxies)}")
+    print(proxy_info_texts["total"].format(total=len(proxies)))
     return proxies
 
 
@@ -36,22 +38,18 @@ def check_proxy(proxy, timeout=5):
 
 def save_proxies(filename, proxies):
     short_path = os.path.relpath(filename, os.getcwd())
-    print(f"Gue simpen {len(proxies)} proxy yang beneran hidup ke: {short_path}")
+    print(proxy_info_texts["saving"].format(alive=len(alive_proxies), path=short_path))
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w") as f:
         for p in proxies:
             f.write(p + "\n")
-    print("Udah kelar, gausah rewel.")
+    print(proxy_info_texts["done"])
 
 def update_proxies():
     all_proxies = fetch_proxyscrape_socks5()
-    print("Gue check dulu bentaran ya...")
+    print(proxy_info_texts["checking"])
     alive_proxies = [p for p in all_proxies if check_proxy(p)]
-    print(f"Yang bisa dipake cuman: {len(alive_proxies)}")
+    print(proxy_info_texts["alive"].format(alive=len(alive_proxies)))
     output_path = os.path.join(os.path.dirname(__file__), "../files/proxy.txt")
     save_proxies(output_path, alive_proxies)
     return alive_proxies
-
-if __name__ == "__main__":
-    print("[*] Ngetes drivers_proxy.py ...")
-    proxies = update_proxies()

@@ -1,5 +1,5 @@
 from lib.tools.drivers_proxy import update_proxies
-from lib.tools.utils import green_text, red_texts, info_text, banner
+from lib.tools.utils import green_text, red_texts, info_text, banner, proxy_info_texts
 from lib.tools.colors import red, green, white, reset
 import time
 import random
