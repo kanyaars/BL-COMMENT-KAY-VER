@@ -5,16 +5,18 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from lib.tools.utils import green_text, red_texts, info_text, banner
 from lib.tools.colors import red, green, white, reset
+from lib.tools.drivers_proxy import get_random_proxy, update_alive_proxies
 import time
 import random
 import json
 import os
 
-def Coba_GueLiat_Dulu(file_path):
+def Coba_GueLiat_Dulu(file_name):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "data")
     full_path = os.path.join(base_path, file_name)
-    with open(file_path, 'r') as file:
-        return json.load(file)
+    with open(full_path, "r") as f:
+        data = json.load(f)
+    return data
 
 def random_delay(min_delay=0.5, max_delay=2):
     delay = random.uniform(min_delay, max_delay)
@@ -30,6 +32,9 @@ def init_driver():
     options.add_argument("--silent")
     options.add_argument("--disable-ffmpeg")
     options.add_argument("--disable-logging")
+    proxy = get_random_proxy()
+    if proxy:
+        options.add_argument(f"--proxy-server=socks5://{proxy}")
     driver = webdriver.Chrome(options=options)
 
     driver.set_page_load_timeout(100)
@@ -86,7 +91,7 @@ def dofollow(urls, Koleksi_Bacotan):
         except WebDriverException:
             print(red_texts[1].format (urls=url))
             continue
-
+            time.sleep(20)
     driver.quit()
     print(red_texts[2])
 
@@ -142,7 +147,7 @@ def nofollow(urls, Koleksi_Bacotan):
         except WebDriverException:
             print(red_texts[1].format (urls=url))
             continue
-
+            time.sleep(20)
     driver.quit()
     print(red_texts[4])
 
