@@ -1,5 +1,6 @@
 from lib.tools.utils import proxy_info_texts
 from lib.tools.colors import red
+from concurrent.futures import ThreadPoolExecutor
 import requests
 import random
 import concurrent.futures
@@ -48,7 +49,12 @@ def save_proxies(filename, proxies):
 def update_proxies():
     all_proxies = fetch_proxyscrape_socks5()
     print(proxy_info_texts["checking"])
-    alive_proxies = [p for p in all_proxies if check_proxy(p)]
+    alive_proxies = []
+    with ThreadPoolExecutor(max_workers=50) as executor:
+        results = executor.map(check_proxy, all_proxies)
+        for proxy, is_alive in zip(all_proxies, results):
+            if is_alive:
+                alive_proxies.append(proxy)
     print(proxy_info_texts["alive"].format(alive=len(alive_proxies)))
     output_path = os.path.join(os.path.dirname(__file__), "../files/proxy.txt")
     save_proxies(output_path, alive_proxies)
