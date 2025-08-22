@@ -2,6 +2,7 @@ import requests
 import random
 import concurrent.futures
 import os
+import socket
 
 def fetch_proxyscrape_socks5():
     url = "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5%22"
@@ -47,7 +48,7 @@ def update_proxies():
     print("Gue check dulu bentaran ya...")
     alive_proxies = [p for p in all_proxies if check_proxy(p)]
     print(f"Yang bisa dipake cuman: {len(alive_proxies)}")
-    output_path = os.path.join(os.path.dirname(__file__), "../2/proxy.txt")
+    output_path = os.path.join(os.path.dirname(__file__), "../files/proxy.txt")
     save_proxies(output_path, alive_proxies)
     return alive_proxies
 
