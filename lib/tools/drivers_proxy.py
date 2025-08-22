@@ -7,7 +7,7 @@ import concurrent.futures
 import os
 import socket
 
-def fetch_proxyscrape_socks5():
+def fetch_proxyscrape_socks5(limit=10000):
     url = "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5%22"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -39,7 +39,7 @@ def check_proxy(proxy, timeout=5):
 
 def save_proxies(filename, proxies):
     short_path = os.path.relpath(filename, os.getcwd())
-    print(proxy_info_texts["saving"].format(alive=len(alive_proxies), path=short_path))
+    print(proxy_info_texts["saving"].format(alive=len(proxies), path=short_path))
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w") as f:
         for p in proxies:
@@ -50,6 +50,7 @@ def update_proxies():
     all_proxies = fetch_proxyscrape_socks5()
     print(proxy_info_texts["checking"])
     alive_proxies = []
+    max_alive = 100
     with ThreadPoolExecutor(max_workers=50) as executor:
         results = executor.map(check_proxy, all_proxies)
         for proxy, is_alive in zip(all_proxies, results):
