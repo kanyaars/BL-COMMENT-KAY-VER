@@ -1,64 +1,56 @@
 import requests
-from bs4 import BeautifulSoup
 import random
+import concurrent.futures
 import os
-import socket
 
-PROXY_FILE = os.path.join(os.path.dirname(__file__), "..", "files", "proxy.txt")
+def fetch_proxyscrape_socks5():
+    url = "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5%22"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/117.0.0.0 Safari/537.36"
+    }
+    r = requests.get(url, headers=headers, timeout=20)
+    r.raise_for_status()
 
-def fetch_socks5_proxies():
-    // Ambil proxy SOCKS5 dari website publik
     proxies = []
-    try:
-        r = requests.get("https://www.socks-proxy.net/", timeout=10)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, "html.parser")
-        table = soup.find("table", {"id": "proxylisttable"})
-        if not table:
-            return []
-
-        for row in table.tbody.find_all("tr"):
-            tds = row.find_all("td")
-            ip = tds[0].text.strip()
-            port = tds[1].text.strip()
-            proxy_type = tds[4].text.strip()
-            if proxy_type.upper() == "SOCKS5":
-                proxies.append(f"socks5://{ip}:{port}")
-    except:
-        pass
+    for line in r.text.splitlines():
+        line = line.strip()
+        if line and ":" in line:
+            proxies.append(f"socks5://{line}")
+    print(f"Hasil panen yang gue dapet: {len(proxies)}")
     return proxies
 
-def check_proxy_alive(proxy, timeout=5):
-    """Cek apakah proxy bisa connect"""
+
+def check_proxy(proxy, timeout=5):
     try:
-        ip_port = proxy.replace("socks5://", "").split(":")
-        ip, port = ip_port[0], int(ip_port[1])
+        ip, port = proxy.replace("socks5://", "").split(":")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
-        sock.connect((ip, port))
+        result = sock.connect_ex((ip, int(port)))
         sock.close()
-        return True
+        return result == 0
     except:
         return False
 
-def update_alive_proxies():
-    """Ambil proxy, cek alive, simpan ke proxy.txt"""
-    proxies = fetch_socks5_proxies()
-    alive_proxies = [p for p in proxies if check_proxy_alive(p)]
-    # simpan ke file
-    with open(PROXY_FILE, "w") as f:
-        for p in alive_proxies:
+def save_proxies(filename, proxies):
+    short_path = os.path.relpath(filename, os.getcwd())
+    print(f"Gue simpen {len(proxies)} proxy yang beneran hidup ke: {short_path}")
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, "w") as f:
+        for p in proxies:
             f.write(p + "\n")
+    print("Udah kelar, gausah rewel.")
+
+def update_proxies():
+    all_proxies = fetch_proxyscrape_socks5()
+    print("Gue check dulu bentaran ya...")
+    alive_proxies = [p for p in all_proxies if check_proxy(p)]
+    print(f"Yang bisa dipake cuman: {len(alive_proxies)}")
+    output_path = os.path.join(os.path.dirname(__file__), "../2/proxy.txt")
+    save_proxies(output_path, alive_proxies)
     return alive_proxies
 
-def get_random_proxy():
-    """Ambil random proxy dari proxy.txt, update jika kosong"""
-    if not os.path.exists(PROXY_FILE) or os.path.getsize(PROXY_FILE) == 0:
-        update_alive_proxies()
-
-    with open(PROXY_FILE, "r") as f:
-        proxies = [line.strip() for line in f if line.strip()]
-    if not proxies:
-        return None
-    return random.choice(proxies)
-    
+if __name__ == "__main__":
+    print("[*] Ngetes drivers_proxy.py ...")
+    proxies = update_proxies()

@@ -1,15 +1,15 @@
+from lib.tools.drivers_proxy import update_proxies
+from lib.tools.utils import green_text, red_texts, info_text, banner
+from lib.tools.colors import red, green, white, reset
+import time
+import random
+import json
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
-from lib.tools.utils import green_text, red_texts, info_text, banner
-from lib.tools.colors import red, green, white, reset
-from lib.tools.drivers_proxy import get_random_proxy, update_alive_proxies
-import time
-import random
-import json
-import os
 
 def Coba_GueLiat_Dulu(file_name):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "data")
@@ -32,9 +32,6 @@ def init_driver():
     options.add_argument("--silent")
     options.add_argument("--disable-ffmpeg")
     options.add_argument("--disable-logging")
-    proxy = get_random_proxy()
-    if proxy:
-        options.add_argument(f"--proxy-server=socks5://{proxy}")
     driver = webdriver.Chrome(options=options)
 
     driver.set_page_load_timeout(100)
@@ -87,7 +84,7 @@ def dofollow(urls, Koleksi_Bacotan):
 
             except TimeoutException:
                 print(red_texts[0].format (urls=url))
-            time.sleep(3)
+            time.sleep(20)
         except WebDriverException:
             print(red_texts[1].format (urls=url))
             continue
@@ -141,9 +138,7 @@ def nofollow(urls, Koleksi_Bacotan):
                 print(green_text.format (urls=url))
             else:
                 print(red_texts[0].format (urls=url))
-
-            time.sleep(3)
-
+            time.sleep(20)
         except WebDriverException:
             print(red_texts[1].format (urls=url))
             continue
@@ -159,6 +154,8 @@ def main():
     pilihan = input(red_texts[8] + " ").strip()
 
     if pilihan == "1":
+        proxies = update_proxies()
+        print(f"[INFO] {len(proxies)} proxies updated & saved.")  
         urls = [
             "https://appeals.cuyahogacounty.gov/about-us/judges/judge-sean-c-gallagher/eighth-district-court-of-appeals",
             "https://bebasata.qnb.com.eg/transfers/Gold-debit-becard",
@@ -167,6 +164,8 @@ def main():
         dofollow(urls, "dofollow.json")
         
     elif pilihan == "2":
+        proxies = update_proxies()
+        print(f"[INFO] {len(proxies)} proxies updated & saved.")
         urls = [
             "https://www.ub.edu/multilingua/resultats-de-la-matricula-de-rosetta-stone/",
             "https://www.ocf.berkeley.edu/~paultkim/will-kobo-release-a-forma-2-in-2020/",
