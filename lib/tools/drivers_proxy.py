@@ -47,7 +47,7 @@ def save_proxies(filename, proxies):
     print(proxy_info_texts["done"])
 
 def update_proxies():
-    all_proxies = fetch_proxyscrape_socks5()
+    all_proxies = fetch_proxyscrape_socks5(limit=10000)
     print(proxy_info_texts["checking"])
     alive_proxies = []
     max_alive = 100
@@ -56,7 +56,9 @@ def update_proxies():
         for proxy, is_alive in zip(all_proxies, results):
             if is_alive:
                 alive_proxies.append(proxy)
+                if len(alive_proxies) >= max_alive:
+                    break
     print(proxy_info_texts["alive"].format(alive=len(alive_proxies)))
-    output_path = os.path.join(os.path.dirname(__file__), "../files/proxy.txt")
+    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../files/proxy.txt"))
     save_proxies(output_path, alive_proxies)
     return alive_proxies
