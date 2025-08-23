@@ -22,7 +22,13 @@ def random_delay(min_delay=0.5, max_delay=2):
     delay = random.uniform(min_delay, max_delay)
     time.sleep(delay)
 
-def init_driver():
+def get_random_proxy(filepath="lib/files/proxy.txt"):
+    with open(filepath, "r") as f:
+        proxies = [line.strip() for line in f if line.strip()]
+    return random.choice(proxies) if proxies else None
+
+
+def init_driver(proxy=None):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
@@ -32,8 +38,10 @@ def init_driver():
     options.add_argument("--silent")
     options.add_argument("--disable-ffmpeg")
     options.add_argument("--disable-logging")
-    driver = webdriver.Chrome(options=options)
 
+    if proxy:
+        options.add_argument(f'--proxy-server={proxy}')
+    return webdriver.Chrome(options=options)
     driver.set_page_load_timeout(100)
     return driver
 
@@ -48,61 +56,65 @@ def find_element_by_multiple_attributes(driver, tag_name, attributes):
     return None
 
 def dofollow(urls, Koleksi_Bacotan):
-    driver = init_driver()
     Tumpukan_Bacotan = Coba_GueLiat_Dulu(Koleksi_Bacotan)
 
     for url in urls:
+        proxy = get_random_proxy()
+        driver = init_driver(proxy)
         try:
             driver.get(url)
             Bacotan_Random = random.choice(Tumpukan_Bacotan)
+            
             Tempat_Bacot = find_element_by_multiple_attributes(driver, 'textarea', ['data-sf-role=comments-new-message', 'placeholder=Leave a comment'])
-
             if Tempat_Bacot:
                 random_delay(2, 4)
                 Tempat_Bacot.clear()
                 random_delay()
                 Tempat_Bacot.send_keys(Bacotan_Random["Bacot"])
-            nama_field = find_element_by_multiple_attributes(driver, 'input', ['data-sf-role=comments-new-name', 'placeholder=Your name'])
 
+            nama_field = find_element_by_multiple_attributes(driver, 'input', ['data-sf-role=comments-new-name', 'placeholder=Your name'])
             if nama_field:
                 nama_field.clear()
                 random_delay()
                 nama_field.send_keys(Bacotan_Random["ManusiaBaik"])
-            email_field = find_element_by_multiple_attributes(driver, 'input', ['data-sf-role=comments-new-email', 'placeholder=Email (optional)'])
 
+            email_field = find_element_by_multiple_attributes(driver, 'input', ['data-sf-role=comments-new-email', 'placeholder=Email (optional)'])
             if email_field:
                 email_field.clear()
                 random_delay()
                 email_field.send_keys(Bacotan_Random["AlamatPalsu"])
+
             try:
                 submit_button = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[data-sf-role="comments-new-submit-button"]'))
                 )
                 random_delay()
                 submit_button.click()
-                print(green_text.format (urls=url))
-
+                print(green_text.format(urls=url, proxy=proxy))
             except TimeoutException:
-                print(red_texts[0].format (urls=url))
+                print(red_texts[0].format(urls=url, proxy=proxy))
+
             time.sleep(20)
         except WebDriverException:
-            print(red_texts[1].format (urls=url))
-            continue
-            time.sleep(20)
-    driver.quit()
+            print(red_texts[1].format(urls=url, proxy=proxy))
+        finally:
+            driver.quit()
+
     print(red_texts[2])
 
 def nofollow(urls, Koleksi_Bacotan):
-    driver = init_driver()
     Tumpukan_Bacotan = Coba_GueLiat_Dulu(Koleksi_Bacotan)
 
     for url in urls:
+        proxy = get_random_proxy()
+        driver = init_driver(proxy=proxy)
         try:
             driver.get(url)
             Bacotan_Random = random.choice(Tumpukan_Bacotan)
+
             komentar_section = find_element_by_multiple_attributes(driver, 'form', ['id=comment', 'class=comment-form', 'name=comment'])
             if not komentar_section:
-                print(red_texts[3].format (urls=url))
+                print(red_texts[3].format(urls=url, proxy=proxy))
                 continue
 
             nama_field = find_element_by_multiple_attributes(driver, 'input', ['id=author', 'name=author', 'class=name'])
@@ -135,15 +147,17 @@ def nofollow(urls, Koleksi_Bacotan):
 
             if submit_button:
                 submit_button.click()
-                print(green_text.format (urls=url))
+                print(green_text.format(urls=url, proxy=proxy))
             else:
-                print(red_texts[0].format (urls=url))
+                print(red_texts[0].format(urls=url, proxy=proxy))
+
             time.sleep(20)
+
         except WebDriverException:
-            print(red_texts[1].format (urls=url))
-            continue
-            time.sleep(20)
-    driver.quit()
+            print(red_texts[1].format(urls=url, proxy=proxy))
+
+        finally:
+            driver.quit()
     print(red_texts[4])
 
 def main():

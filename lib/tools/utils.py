@@ -26,10 +26,10 @@ banner = f'''
 green_text = f"{green}Bacotan lo sukses > {{urls}}{reset}"
 
 red_texts = [
-    f"{red}Bacotan lo gagal > {{urls}}{reset}",
-    f"{red}Yah apanya yang salah ya, coba lo check > {{urls}}{reset}",
+    f"{red}Bacotan lo gagal > {{urls}} lewat proxy {{proxy}} {reset}",
+    f"{red}Yah apanya yang salah ya, coba lo check > {{urls}} lewat proxy {{proxy}} {reset}",
     f"{red}Semua Bacotan lo di Backlink dofollow udah rapih nih{reset}",
-    f"{red}Kaga ada tempat buat ngebacot > {{urls}}{reset}",
+    f"{red}Kaga ada tempat buat ngebacot > {{urls}} lewat proxy {{proxy}} {reset}",
     f"{red}Semua Bacotan lo di Backlink nofollow udah rapih nih.{reset}",
     f"{red}Lo mau ngebacot di Backlink apaan:{reset}",
     f"{red}[1] Dofollow{reset}",
