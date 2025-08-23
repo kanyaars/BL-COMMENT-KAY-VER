@@ -1,4 +1,5 @@
 from lib.tools.drivers_proxy import update_proxies
+from lib.tools.drivers_user_agent import update_user_agents
 from lib.tools.utils import green_text, red_texts, info_text, banner, proxy_info_texts
 from lib.tools.colors import red, green, white, reset
 import time
@@ -170,6 +171,8 @@ def main():
     if pilihan == "1":
         proxies = update_proxies()
         print(f"[INFO] {len(proxies)} proxies updated & saved.")  
+        user_agent_file = update_user_agents()
+        print(f"[INFO] User-Agent file updated: {user_agent_file}")
         urls = [
             "https://appeals.cuyahogacounty.gov/about-us/judges/judge-sean-c-gallagher/eighth-district-court-of-appeals",
             "https://bebasata.qnb.com.eg/transfers/Gold-debit-becard",
@@ -180,6 +183,8 @@ def main():
     elif pilihan == "2":
         proxies = update_proxies()
         print(f"[INFO] {len(proxies)} proxies updated & saved.")
+        user_agent_file = update_user_agents()
+        print(f"[INFO] User-Agent file updated: {user_agent_file}")        
         urls = [
             "https://www.ub.edu/multilingua/resultats-de-la-matricula-de-rosetta-stone/",
             "https://www.ocf.berkeley.edu/~paultkim/will-kobo-release-a-forma-2-in-2020/",
