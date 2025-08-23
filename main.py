@@ -12,6 +12,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
+def log_result(status, url, proxy, ua):
+    base_path = os.path.join(os.path.dirname(__file__), "lib", "files")
+    os.makedirs(base_path, exist_ok=True)
+
+    if status == "done":
+        file_path = os.path.join(base_path, "result_done.txt")
+    else:
+        file_path = os.path.join(base_path, "result_fail.txt")
+
+    with open(file_path, "a") as f:
+        f.write(f"{url} | Proxy: {proxy} | UA: {ua}\n")
+
 def Coba_GueLiat_Dulu(file_name):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "data")
     full_path = os.path.join(base_path, file_name)
@@ -95,8 +107,10 @@ def dofollow(urls, Koleksi_Bacotan):
                 random_delay()
                 submit_button.click()
                 print(green_text.format(urls=url, proxy=proxy, ua=ua))
+                log_result("done", url, proxy, ua)
             except TimeoutException:
                 print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
+                log_result("fail", url, proxy, ua)
 
             time.sleep(20)
         except WebDriverException:
@@ -153,11 +167,12 @@ def nofollow(urls, Koleksi_Bacotan):
             if submit_button:
                 submit_button.click()
                 print(green_text.format(urls=url, proxy=proxy, ua=ua))
+                log_result("done", url, proxy, ua)
             else:
                 print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
+                log_result("fail", url, proxy, ua)
 
             time.sleep(20)
-
         except WebDriverException:
             print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
 
