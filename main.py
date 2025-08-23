@@ -12,17 +12,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
-def log_result(status, url, proxy, ua):
+def log_result(status, url, index):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "files")
     os.makedirs(base_path, exist_ok=True)
-
     if status == "done":
         file_path = os.path.join(base_path, "result_done.txt")
     else:
         file_path = os.path.join(base_path, "result_fail.txt")
-
     with open(file_path, "a") as f:
-        f.write(f"{url} | Proxy: {proxy} | UA: {ua}\n")
+        f.write(f"{index}. {url}\n")
 
 def Coba_GueLiat_Dulu(file_name):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "data")
@@ -40,6 +38,16 @@ def get_random_proxy(filepath="lib/files/proxy.txt"):
         proxies = [line.strip() for line in f if line.strip()]
     return random.choice(proxies) if proxies else None
 
+def load_urls(file_path):
+    urls = []
+    if not os.path.exists(file_path):
+        return urls
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                urls.append(line)
+    return urls    
 
 def init_driver(proxy=None, user_agent=None):
     options = webdriver.ChromeOptions()
@@ -56,7 +64,7 @@ def init_driver(proxy=None, user_agent=None):
         options.add_argument(f'--proxy-server={proxy}')
     if user_agent:
         options.add_argument(f'--user-agent={user_agent}')        
-    return webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(100)
     return driver
 
@@ -73,7 +81,7 @@ def find_element_by_multiple_attributes(driver, tag_name, attributes):
 def dofollow(urls, Koleksi_Bacotan):
     Tumpukan_Bacotan = Coba_GueLiat_Dulu(Koleksi_Bacotan)
 
-    for url in urls:
+    for i, url in enumerate(urls, start=1):
         proxy = get_random_proxy()
         ua = get_random_user_agent() 
         driver = init_driver(proxy, user_agent=ua)
@@ -107,14 +115,15 @@ def dofollow(urls, Koleksi_Bacotan):
                 random_delay()
                 submit_button.click()
                 print(green_text.format(urls=url, proxy=proxy, ua=ua))
-                log_result("done", url, proxy, ua)
+                log_result("done", url, i)
             except TimeoutException:
                 print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
-                log_result("fail", url, proxy, ua)
+                log_result("fail", url, i)
 
             time.sleep(20)
         except WebDriverException:
             print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
+            log_result("fail", url, i)
         finally:
             driver.quit()
 
@@ -123,7 +132,7 @@ def dofollow(urls, Koleksi_Bacotan):
 def nofollow(urls, Koleksi_Bacotan):
     Tumpukan_Bacotan = Coba_GueLiat_Dulu(Koleksi_Bacotan)
 
-    for url in urls:
+    for i, url in enumerate(urls, start=1):
         proxy = get_random_proxy()
         ua = get_random_user_agent() 
         driver = init_driver(proxy, user_agent=ua)
@@ -167,14 +176,15 @@ def nofollow(urls, Koleksi_Bacotan):
             if submit_button:
                 submit_button.click()
                 print(green_text.format(urls=url, proxy=proxy, ua=ua))
-                log_result("done", url, proxy, ua)
+                log_result("done", url, i)
             else:
                 print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
-                log_result("fail", url, proxy, ua)
+                log_result("fail", url, i)
 
             time.sleep(20)
         except WebDriverException:
             print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
+            log_result("fail", url, i)
 
         finally:
             driver.quit()
@@ -192,11 +202,7 @@ def main():
         print(f"[INFO] {len(proxies)} proxies updated & saved.")  
         user_agent_file = update_user_agents()
         print(f"[INFO] User-Agent file updated: {user_agent_file}")
-        urls = [
-            "https://appeals.cuyahogacounty.gov/about-us/judges/judge-sean-c-gallagher/eighth-district-court-of-appeals",
-            "https://bebasata.qnb.com.eg/transfers/Gold-debit-becard",
-            "https://conwayintranet.mhpteamsi.com/home/conway-regional/2021/03/01/ay-magazine%27s-best-of-2021?",
-        ]
+        urls = load_urls("lib/files/list_dofollow.txt")
         dofollow(urls, "dofollow.json")
         
     elif pilihan == "2":
@@ -204,11 +210,7 @@ def main():
         print(f"[INFO] {len(proxies)} proxies updated & saved.")
         user_agent_file = update_user_agents()
         print(f"[INFO] User-Agent file updated: {user_agent_file}")        
-        urls = [
-            "https://www.ub.edu/multilingua/resultats-de-la-matricula-de-rosetta-stone/",
-            "https://www.ocf.berkeley.edu/~paultkim/will-kobo-release-a-forma-2-in-2020/",
-            "https://www.mae.gov.bi/en/visit-to-burundi-of-a-delegation-from-the-african-union-commission/",
-        ]
+        urls = load_urls("lib/files/list_nofollow.txt")
         nofollow(urls, "nofollow.json")
 
     elif pilihan == "3":

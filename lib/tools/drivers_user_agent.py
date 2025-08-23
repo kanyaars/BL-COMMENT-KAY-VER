@@ -4,7 +4,6 @@ import random
 import re
 import requests
 
-# Hardcoded fallback User-Agents
 FALLBACK_UA = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -21,7 +20,6 @@ BLACKLIST_KEYWORDS = [
 ]
 
 def fetch_user_agents(api_key: str, limit=100):
-    """Fetch User-Agents from WhatIsMyBrowser API"""
     agents = []
     headers = {"X-API-KEY": api_key}
     for browser in BROWSERS:
@@ -40,15 +38,12 @@ def fetch_user_agents(api_key: str, limit=100):
     return agents or FALLBACK_UA
 
 def save_user_agents(agents, path=USER_AGENT_FILE, count=100):
-    """Save random sample of user agents to file"""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         for _ in range(count):
             f.write(random.choice(agents) + "\n")
-    print(f"[INFO] Saved {count} user-agents to {path}")
 
 def update_user_agents():
-    """Update User-Agent file"""
     api_key = os.getenv("WHATISMYBROWSER_KEY")
     if api_key:
         agents = fetch_user_agents(api_key)
@@ -58,7 +53,6 @@ def update_user_agents():
     return USER_AGENT_FILE
 
 def get_random_user_agent(filepath=None):
-    """Get one random user-agent from file"""
     if filepath is None:
         filepath = USER_AGENT_FILE
     if not os.path.exists(filepath):
