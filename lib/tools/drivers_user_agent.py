@@ -66,8 +66,3 @@ def get_random_user_agent(filepath=None):
     with open(filepath, "r") as f:
         agents = [line.strip() for line in f if line.strip()]
     return random.choice(agents) if agents else random.choice(FALLBACK_UA)
-
-# Example usage:
-if __name__ == "__main__":
-    update_user_agents()
-    print("Random UA:", get_random_user_agent())

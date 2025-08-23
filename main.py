@@ -1,5 +1,5 @@
 from lib.tools.drivers_proxy import update_proxies
-from lib.tools.drivers_user_agent import update_user_agents
+from lib.tools.drivers_user_agent import update_user_agents, get_random_user_agent
 from lib.tools.utils import green_text, red_texts, info_text, banner, proxy_info_texts
 from lib.tools.colors import red, green, white, reset
 import time
@@ -29,7 +29,7 @@ def get_random_proxy(filepath="lib/files/proxy.txt"):
     return random.choice(proxies) if proxies else None
 
 
-def init_driver(proxy=None):
+def init_driver(proxy=None, user_agent=None):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
@@ -42,6 +42,8 @@ def init_driver(proxy=None):
 
     if proxy:
         options.add_argument(f'--proxy-server={proxy}')
+    if user_agent:
+        options.add_argument(f'--user-agent={user_agent}')        
     return webdriver.Chrome(options=options)
     driver.set_page_load_timeout(100)
     return driver
@@ -61,7 +63,8 @@ def dofollow(urls, Koleksi_Bacotan):
 
     for url in urls:
         proxy = get_random_proxy()
-        driver = init_driver(proxy)
+        ua = get_random_user_agent() 
+        driver = init_driver(proxy, user_agent=ua)
         try:
             driver.get(url)
             Bacotan_Random = random.choice(Tumpukan_Bacotan)
@@ -91,13 +94,13 @@ def dofollow(urls, Koleksi_Bacotan):
                 )
                 random_delay()
                 submit_button.click()
-                print(green_text.format(urls=url, proxy=proxy))
+                print(green_text.format(urls=url, proxy=proxy, ua=ua))
             except TimeoutException:
-                print(red_texts[0].format(urls=url, proxy=proxy))
+                print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
 
             time.sleep(20)
         except WebDriverException:
-            print(red_texts[1].format(urls=url, proxy=proxy))
+            print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
         finally:
             driver.quit()
 
@@ -108,14 +111,15 @@ def nofollow(urls, Koleksi_Bacotan):
 
     for url in urls:
         proxy = get_random_proxy()
-        driver = init_driver(proxy=proxy)
+        ua = get_random_user_agent() 
+        driver = init_driver(proxy, user_agent=ua)
         try:
             driver.get(url)
             Bacotan_Random = random.choice(Tumpukan_Bacotan)
 
             komentar_section = find_element_by_multiple_attributes(driver, 'form', ['id=comment', 'class=comment-form', 'name=comment'])
             if not komentar_section:
-                print(red_texts[3].format(urls=url, proxy=proxy))
+                print(red_texts[3].format(urls=url, proxy=proxy, ua=ua))
                 continue
 
             nama_field = find_element_by_multiple_attributes(driver, 'input', ['id=author', 'name=author', 'class=name'])
@@ -148,14 +152,14 @@ def nofollow(urls, Koleksi_Bacotan):
 
             if submit_button:
                 submit_button.click()
-                print(green_text.format(urls=url, proxy=proxy))
+                print(green_text.format(urls=url, proxy=proxy, ua=ua))
             else:
-                print(red_texts[0].format(urls=url, proxy=proxy))
+                print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
 
             time.sleep(20)
 
         except WebDriverException:
-            print(red_texts[1].format(urls=url, proxy=proxy))
+            print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
 
         finally:
             driver.quit()
