@@ -26,10 +26,10 @@ banner = f'''
 green_text = f"{green}Bacotan lo sukses > {{urls}}{reset}"
 
 red_texts = [
-    f"{red}Bacotan lo gagal > {{urls}} lewat proxy {{proxy}} pake UA {{ua}}{reset}",
-    f"{red}Yah apanya yang salah ya, coba lo check > {{urls}} lewat proxy {{proxy}} pake UA {{ua}}{reset}",
+    f"{red}Bacotan lo gagal > {{urls}}{reset}",
+    f"{red}Yah apanya yang salah ya, coba lo check > {{urls}}{reset}",
     f"{red}Semua Bacotan lo di Backlink dofollow udah rapih nih{reset}",
-    f"{red}Kaga ada tempat buat ngebacot > {{urls}} lewat proxy {{proxy}} pake UA {{ua}}{reset}",
+    f"{red}Kaga ada tempat buat ngebacot > {{urls}}{reset}",
     f"{red}Semua Bacotan lo di Backlink nofollow udah rapih nih.{reset}",
     f"{red}Lo mau ngebacot di Backlink apaan:{reset}",
     f"{red}[1] Dofollow{reset}",
@@ -38,8 +38,13 @@ red_texts = [
     f"{red}LO BISA BACA KAGA SI?!! UDAH GUA BILANG KAGA ADA PILIHAN NOMOR 3 {reset}",
     f"{red}INI PILIHANNYA CUMAN ANGKA DOANG JANGAN LO MASUKIN HURUF BUTA LO YA{reset}",
     f"{red}LO MASUKIN APAAN ITU TOLOL???!!!!{reset}",
-    f"{red}NOMOR 3 AJA KAGA ADA LO MILIH NOMOR YANG LAEN??!!!!{reset}"
-
+    f"{red}NOMOR 3 AJA KAGA ADA LO MILIH NOMOR YANG LAEN??!!!!{reset}",
+    f"{red}[INFO] User-Agent file updated: {{user_agent_file}}{reset}",
+    f"{red}[INFO] {{len_proxies}} proxies updated & saved.{reset}",
+    f"{red}[INFO] Tekan Enter untuk kembali ke menu utama...{reset}",
+    f"{red}[99] Keluar dari program{reset}",
+    f"{red}Keluar dari program...{reset}",
+    f"\n{red}WOI KALO MAU KELUAR BALIK KE HALAMAN UTAMA TERUS MASUKIN ANGKA 99{reset}"
 ]
 
 info_text = f"{white}Ini teks putih contoh doang{reset}"

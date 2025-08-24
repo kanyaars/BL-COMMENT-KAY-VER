@@ -6,21 +6,23 @@ import time
 import random
 import json
 import os
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
-def log_result(status, url, index):
+def log_result(status, url, backlink_type="dofollow"):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "files")
     os.makedirs(base_path, exist_ok=True)
     if status == "done":
         file_path = os.path.join(base_path, "result_done.txt")
     else:
         file_path = os.path.join(base_path, "result_fail.txt")
-    with open(file_path, "a") as f:
-        f.write(f"{index}. {url}\n")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(file_path, "a", encoding="utf-8") as f:
+        f.write(f"({timestamp}) ({backlink_type}) {url}\n")
 
 def Coba_GueLiat_Dulu(file_name):
     base_path = os.path.join(os.path.dirname(__file__), "lib", "data")
@@ -115,15 +117,15 @@ def dofollow(urls, Koleksi_Bacotan):
                 random_delay()
                 submit_button.click()
                 print(green_text.format(urls=url, proxy=proxy, ua=ua))
-                log_result("done", url, i)
+                log_result("done", url, "dofollow")
             except TimeoutException:
                 print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
-                log_result("fail", url, i)
+                log_result("fail", url, "dofollow")
 
             time.sleep(20)
         except WebDriverException:
             print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
-            log_result("fail", url, i)
+            log_result("fail", url, "dofollow")
         finally:
             driver.quit()
 
@@ -176,54 +178,67 @@ def nofollow(urls, Koleksi_Bacotan):
             if submit_button:
                 submit_button.click()
                 print(green_text.format(urls=url, proxy=proxy, ua=ua))
-                log_result("done", url, i)
+                log_result("done", url, "nofollow")
             else:
                 print(red_texts[0].format(urls=url, proxy=proxy, ua=ua))
-                log_result("fail", url, i)
+                log_result("fail", url, "nofollow")
 
             time.sleep(20)
         except WebDriverException:
             print(red_texts[1].format(urls=url, proxy=proxy, ua=ua))
-            log_result("fail", url, i)
+            log_result("fail", url, "nofollow")
 
         finally:
             driver.quit()
     print(red_texts[4])
 
 def main():
-    print(banner)
-    print(red_texts[5])
-    print(red_texts[6])
-    print(red_texts[7])
-    pilihan = input(red_texts[8] + " ").strip()
+    try:
+        while True:
+            print(banner)
+            print(red_texts[5])
+            print(red_texts[6])
+            print(red_texts[7])
+            print(red_texts[16])
+            pilihan = input(red_texts[8] + " ").strip()
 
-    if pilihan == "1":
-        proxies = update_proxies()
-        print(f"[INFO] {len(proxies)} proxies updated & saved.")  
-        user_agent_file = update_user_agents()
-        print(f"[INFO] User-Agent file updated: {user_agent_file}")
-        urls = load_urls("lib/files/list_dofollow.txt")
-        dofollow(urls, "dofollow.json")
-        
-    elif pilihan == "2":
-        proxies = update_proxies()
-        print(f"[INFO] {len(proxies)} proxies updated & saved.")
-        user_agent_file = update_user_agents()
-        print(f"[INFO] User-Agent file updated: {user_agent_file}")        
-        urls = load_urls("lib/files/list_nofollow.txt")
-        nofollow(urls, "nofollow.json")
+            if pilihan == "1":
+                proxies = update_proxies()
+                print(red_texts[14].format(len_proxies=len(proxies)))
+                user_agent_file = update_user_agents()
+                print(red_texts[13].format(user_agent_file=user_agent_file))
+                urls = load_urls("lib/files/list_dofollow.txt")
+                dofollow(urls, "dofollow.json")
+                input(red_texts[15])
 
-    elif pilihan == "3":
-        print(red_texts[9])
+            elif pilihan == "2":
+                proxies = update_proxies()
+                print(red_texts[14].format(len_proxies=len(proxies)))
+                user_agent_file = update_user_agents()
+                print(red_texts[13].format(user_agent_file=user_agent_file))        
+                urls = load_urls("lib/files/list_nofollow.txt")
+                nofollow(urls, "nofollow.json")
+                input(red_texts[15])
 
-    elif pilihan.isalpha():
-        print(red_texts[10])
-    
-    elif not pilihan.isalnum():
-        print(red_texts[11])
-        
-    else:
-        print(red_texts[12])
+            elif pilihan == "3":
+                print(red_texts[9])
+
+            elif pilihan == "99":
+                print(red_texts[17])
+                break
+
+            elif pilihan.isalpha():
+                print(red_texts[10])
+            
+            elif not pilihan.isalnum():
+                print(red_texts[11])
+                
+            else:
+                print(red_texts[12])
+
+    except KeyboardInterrupt:
+        print(red_texts[-1])
+        main()      
 
 if __name__ == "__main__":
     main()
