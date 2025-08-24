@@ -80,5 +80,3 @@ BL-COMMENT-KAY-VER
 
 Script ini gue fork dari [bapakgacor/auto-komen](https://github.com/bapakgacor/auto-komen)
 — versi gue diedit biar hidup gak gitu-gitu aja.
-Mau gua tambahin juga **contoh isi file `list_dofollow.txt` dan `list_nofollow.txt`** biar user gak bingung formatnya?
-```
